@@ -9,7 +9,15 @@ $totalRows_rsView = mysql_num_rows($rsView);
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Untitled Document</title>
+<title>Statistics</title>
+<style type="text/css">
+<!--
+body {
+	font-family: Verdana;
+	font-size: 11px;
+}
+-->
+</style>
 </head>
 
 <body>
@@ -31,7 +39,8 @@ $totalRows_rsView = mysql_num_rows($rsView);
       <td><?php echo $row_rsView['cnt']; ?></td>
       <td><?php echo $row_rsView['province']; ?></td>
       <td><?php echo $row_rsView['cntTotalPoi']; ?></td>
-      <td><?php echo $row_rsView['cntTotalPoiFound']; ?> [<?php echo ($row_rsView['cntTotalPoiFound']/$row_rsView['cntTotalPoi'])*100; ?> %]</td>
+      <td><a href="#"><?php echo $row_rsView['cntTotalPoiFound']; ?>
+        <?php if($row_rsView['cntTotalPoi']>0) { ?> [<?php echo number_format(($row_rsView['cntTotalPoiFound']/$row_rsView['cntTotalPoi'])*100,2); ?> %]<?php } ?></a></td>
     </tr>
     <?php } while ($row_rsView = mysql_fetch_assoc($rsView)); ?>
 </table>

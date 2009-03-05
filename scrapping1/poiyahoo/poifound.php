@@ -13,11 +13,19 @@ $totalRows_rsPoi = mysql_num_rows($rsPoi);
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Untitled Document</title>
+<title>Poi Found</title>
+<style type="text/css">
+<!--
+body {
+	font-family: Verdana;
+	font-size: 11px;
+}
+-->
+</style>
 </head>
 
 <body>
-<p>Poi Found</p>
+<h1>Poi Found</h1>
 <table border="1" cellpadding="5" cellspacing="0">
   <tr>
     <td><strong>id</strong></td>
