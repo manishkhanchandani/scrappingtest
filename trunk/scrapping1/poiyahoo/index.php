@@ -26,21 +26,23 @@ body {
   <tr>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
-    <td colspan="2" align="center"><strong>With Hotel Id </strong></td>
+    <td colspan="3" align="center"><strong>With Hotel Id </strong></td>
   </tr>
   <tr>
     <td><strong>Count</strong></td>
     <td><strong>Province</strong></td>
     <td><strong>Total Poi in XML </strong></td>
     <td><strong>Total Poi Found </strong></td>
+    <td><strong>Poi Not Found </strong></td>
   </tr>
   <?php do { ?>
     <tr>
       <td><?php echo $row_rsView['cnt']; ?></td>
       <td><?php echo $row_rsView['province']; ?></td>
       <td><?php echo $row_rsView['cntTotalPoi']; ?></td>
-      <td><a href="#"><?php echo $row_rsView['cntTotalPoiFound']; ?>
-        <?php if($row_rsView['cntTotalPoi']>0) { ?> [<?php echo number_format(($row_rsView['cntTotalPoiFound']/$row_rsView['cntTotalPoi'])*100,2); ?> %]<?php } ?></a></td>
+      <td><a href="poifound.php?province=<?php echo $row_rsView['province']; ?>" target="_blank"><?php echo $row_rsView['cntTotalPoiFound']; ?>
+      <?php if($row_rsView['cntTotalPoi']>0) { ?> [<?php echo number_format(($row_rsView['cntTotalPoiFound']/$row_rsView['cntTotalPoi'])*100,2); ?> %]<?php } ?></a></td>
+      <td><a href="nopoifound.php?province=<?php echo $row_rsView['province']; ?>"><?php echo $notfound = $row_rsView['cntTotalPoi']-$row_rsView['cntTotalPoiFound']; ?> <?php if($row_rsView['cntTotalPoi']>0) { ?> [<?php echo number_format(($notfound/$row_rsView['cntTotalPoi'])*100,2); ?> %]<?php } ?></a></td>
     </tr>
     <?php } while ($row_rsView = mysql_fetch_assoc($rsView)); ?>
 </table>
