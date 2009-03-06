@@ -11,7 +11,7 @@ if (isset($_GET['province'])) {
   $colname_rsView = (get_magic_quotes_gpc()) ? $_GET['province'] : addslashes($_GET['province']);
 }
 mysql_select_db($database_conn, $conn);
-$query_rsView = sprintf("SELECT * FROM us_xml_yahoo WHERE province = '%s' AND gotpoi = 1 AND reviewfound = -1 LIMIT 1", $colname_rsView);
+$query_rsView = sprintf("SELECT * FROM us_xml_yahoo WHERE province = '%s' AND gotpoi = 1 AND reviewfound = -1 LIMIT 25", $colname_rsView);
 $rsView = mysql_query($query_rsView, $conn) or die(mysql_error());
 $row_rsView = mysql_fetch_assoc($rsView);
 $totalRows_rsView = mysql_num_rows($rsView);
@@ -75,6 +75,8 @@ no record found.
 ?>
 <?php } while ($row_rsView = mysql_fetch_assoc($rsView)); ?>
 </table>
+<meta http-equiv="refresh" content="30" />
+
 <?php } ?>
 </body>
 </html>
