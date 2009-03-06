@@ -72,7 +72,7 @@ function backup($tbl, $send_mail, $email="", $database, $datas, $structure) {
 			$rec = mysql_fetch_array($rs);
 			$tableStructure .= $rec[1].";\n\n";
 			
-			$fp = fopen($dir."/".$database."_dbstructure.sql","w");
+			$fp = fopen($dir."/".$tbl."_dbstructure.sql","w");
 			fwrite($fp, $tableStructure);
 			fclose($fp);
 			if($structure==1) {
@@ -113,7 +113,7 @@ function backup($tbl, $send_mail, $email="", $database, $datas, $structure) {
 				//$return .= $data;
 				//$return .= "\n\n";					
 				
-				$fp = fopen($dir."/".$database."_dbdata_".$counter.".sql","w");
+				$fp = fopen($dir."/".$tbl."_dbdata_".$counter.".sql","w");
 				fwrite($fp, $fulldata);
 				fclose($fp);
 				//if($datas==1) {
@@ -150,7 +150,8 @@ while ($row = mysql_fetch_row($result)) {
 	$tbls[] = $row[0];
 }
 */
-$tbls = array("poi_detail");
+$tblg = $_GET['t']; if(!$tblg) { echo 'choose table'; exit; }
+$tbls = array($tblg);
 $email = "naveenkhanchandani@gmail.com";
 $return = backup($tbls, $send_mail=1, $email, $database_conn, 1, 1);
 //echo nl2br(htmlentities($return));
