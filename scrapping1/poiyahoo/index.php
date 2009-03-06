@@ -49,8 +49,8 @@ body {
     </tr>
     <?php } while ($row_rsView = mysql_fetch_assoc($rsView)); ?>
     <tr>
-      <td><?php echo $totcnt; ?>&nbsp;</td>
-      <td>s</td>
+      <td>&nbsp;</td>
+      <td><?php echo $totcnt; ?></td>
       <td>&nbsp;</td>
       <td><?php echo $totcntPoi; ?>&nbsp;</td>
       <td>&nbsp;</td>
