@@ -6,17 +6,17 @@ include('Yahoo.php');
 $Yahoo = new Yahoo;
 ?>
 <?php
-$colname_rsView = "KS";
+$colname_rsView = "RI";
 if (isset($_GET['province'])) {
   $colname_rsView = (get_magic_quotes_gpc()) ? $_GET['province'] : addslashes($_GET['province']);
 }
 mysql_select_db($database_conn, $conn);
-$query_rsView = sprintf("SELECT * FROM us_xml_yahoo WHERE province = '%s' AND (baseurlflag = 1 OR firsturlflag = 1) AND gotpoi = 1 AND flag = 1 AND reviewfound = -1", $colname_rsView);
+$query_rsView = sprintf("SELECT * FROM us_xml_yahoo WHERE province = '%s' AND gotpoi = 1 AND reviewfound = -1 LIMIT 1", $colname_rsView);
 $rsView = mysql_query($query_rsView, $conn) or die(mysql_error());
 $row_rsView = mysql_fetch_assoc($rsView);
 $totalRows_rsView = mysql_num_rows($rsView);
-print_r($row_rsView);
-print_r ($totalRows_rsView);
+//print_r($row_rsView);
+//print_r ($totalRows_rsView);
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -68,7 +68,7 @@ no record found.
 	echo $index;
 	echo "<hr>";
 	$Yahoo->getTotalReview($province, $id);
-	$Yahoo->changeip($index);
+	//$Yahoo->changeip($index);
 
 
 //exit;
