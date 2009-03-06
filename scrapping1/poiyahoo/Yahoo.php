@@ -273,14 +273,16 @@ class Yahoo {
 		$links = array ();
 		foreach ($doc->getElementsByTagName('a') as $a) {
 			$href = $a->getAttribute('href');
+			//print $href."<br>";
 			if ($href) {
-				$regexp = "p\-reviews\-(.*)\-prod\-travelguide\-action\-read\-ratings_and_reviews\-i";
+				$regexp = "p\-reviews\-(.*)\-prod\-(.*)\-action\-read\-ratings_and_reviews\-i";
 				$matches = $this->regexp($regexp, $href);
 				//print_r($matches);
 				if (!empty ($matches)) {
 					$url = $this->get_absolute_url('http://travel.yahoo.com/', $href);
 					$temp['url'] = $url;
 					$temp['id'] = $matches[0][1];
+					$temp['type'] = $matches[0][2];					
 					$urls[] = $temp;
 				}
 			}
@@ -290,21 +292,21 @@ class Yahoo {
 			return (false);
 		else{
 			$yahooid = $urls[1]['id'];
-			return($this->generatepages($reviewcount,$yahooid));
+			$yahootype = $urls[1]['type'];
+			return($this->generatepages($reviewcount,$yahooid,$yahootype));
 
 		}
 	}
 
-	private function generatepages($reviewcount,$yahooid){
-		//http://travel.yahoo.com/p-reviews-2828942-prod-travelguide-action-read-ratings_and_reviews-i;_ylt=AvJ6MN_.e2JPtvR_vZSzzUGGFmoL
-		$url[] = 'http://travel.yahoo.com/p-reviews-'.$yahooid.'-prod-travelguide-action-read-ratings_and_reviews-i';
+	private function generatepages($reviewcount,$yahooid,$yahootype){	//http://travel.yahoo.com/p-reviews-2828942-prod-travelguide-action-read-ratings_and_reviews-i;_ylt=AvJ6MN_.e2JPtvR_vZSzzUGGFmoL
+		$url[] = 'http://travel.yahoo.com/p-reviews-'.$yahooid.'-prod-'.$yahootype.'-action-read-ratings_and_reviews-i';
 		if($reviewcount > 10){
 			$pages = $reviewcount/10;
 			if(!$reviewcount%10){
 				$pages--;
 			}
 			for($page_index=1;$page_index < $pages;$page_index++){
-				$url[] = 'http://travel.yahoo.com/p-reviews-'.$yahooid.'-action-read-from-'.($page_index*10+1).'-prod-travelguide-ratings_and_reviews-i';
+				$url[] = 'http://travel.yahoo.com/p-reviews-'.$yahooid.'-action-read-from-'.($page_index*10+1).'-prod-'.$yahootype.'-ratings_and_reviews-i';
 			}
 		}
 		return($url);
