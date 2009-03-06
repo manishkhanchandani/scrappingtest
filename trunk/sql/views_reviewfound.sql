@@ -1,0 +1,1 @@
+create view reviewfound as select count(province) as cnt, province from us_xml_yahoo where reviewfound > 0 group by province
