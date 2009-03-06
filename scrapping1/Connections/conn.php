@@ -2,7 +2,7 @@
 # FileName="Connection_php_mysql.htm"
 # Type="MYSQL"
 # HTTP="true"
-$hostname_conn = "localhost";
+$hostname_conn = "220.227.198.8";
 $database_conn = "scrapping";
 $username_conn = "user";
 $password_conn = "password";
