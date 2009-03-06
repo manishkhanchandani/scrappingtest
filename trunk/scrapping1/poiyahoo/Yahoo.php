@@ -118,24 +118,37 @@ class Yahoo {
 			//print_r($reviews_array);
 			$totalreviews = $reviews_array[1]; 
 			print($totalreviews);
-			$reviewPageUrl = $this->getReviewpageLink($DOMdoc);
-			print "<br><br>" . $reviewPageUrl . "<br><br>";
-			$this->updatereviewfound($id,$totalreviews,$reviewPageUrl);
-			$reviewfound = true;
+			if($totalreviews > 100){
+				$totalreviews = 100;
+			}
+				$reviewpages_array = $this->generateReviewpageslink($DOMdoc,$totalreviews);
+				print"<pre>";
+				print_r($reviewpages_array);
+				print"<\pre>";
+				$reviewPageUrl = serialize($reviewpages_array);
+			/*}else{
+				$reviewPageUrl = $this->getReviewpageLink($DOMdoc);
+				print "<br><br>" . $reviewPageUrl . "<br><br>";
+			}*/
+				$this->updatereviewfound($id,$totalreviews,$reviewPageUrl);
+				$reviewfound = true;
 			}else{
-			$this->updatereviewfound($id,0,"");
+				$this->updatereviewfound($id,0,"");
 			}
 		
 		 if($reviewfound){
 			$dir = $this->yahooreviewFiles."/".$province;
-			$filetosave = $dir."/".$id.".html";
 			if(!is_dir($dir)) {
 				mkdir($dir, 0777);
 				chmod($dir, 0777);
 			}
-			if(!file_exists($filetosave)) {
-				$contents = file_get_contents($reviewPageUrl);
-				$fp = file_put_contents($filetosave, $contents);
+			$filetosave = $dir."/".$id.".html";
+			for($counter=1;$counter <= count($reviewpages_array);$counter++){
+				if(!file_exists($filetosave)) {
+					$contents = file_get_contents($reviewpages_array[$counter-1]);
+					$fp = file_put_contents($filetosave, $contents);
+				}
+				$filetosave = $dir."/".$id."_".$counter.".html";
 			}
 		 }
 	}
@@ -250,10 +263,51 @@ class Yahoo {
 		return substr($haystack, 0, strlen($needle)) == $needle;
 	}
 
-	public function updatereviewfound ($id, $totalreviews, $reviewurl) {
+	private function updatereviewfound ($id, $totalreviews, $reviewurl) {
 		$sql = "update us_xml_yahoo set reviewfound  = '".$totalreviews."', reviewurl = '".$this->clean($reviewurl)."' WHERE id = '".$id."'";
 		echo $sql."<br>";
 		mysql_query($sql) or die(mysql_error());
+	}
+
+	private function generateReviewpageslink($doc,$reviewcount) {
+		$links = array ();
+		foreach ($doc->getElementsByTagName('a') as $a) {
+			$href = $a->getAttribute('href');
+			if ($href) {
+				$regexp = "p\-reviews\-(.*)\-prod\-travelguide\-action\-read\-ratings_and_reviews\-i";
+				$matches = $this->regexp($regexp, $href);
+				//print_r($matches);
+				if (!empty ($matches)) {
+					$url = $this->get_absolute_url('http://travel.yahoo.com/', $href);
+					$temp['url'] = $url;
+					$temp['id'] = $matches[0][1];
+					$urls[] = $temp;
+				}
+			}
+		}
+//		print_r($urls);
+		if(empty($urls))
+			return (false);
+		else{
+			$yahooid = $urls[1]['id'];
+			return($this->generatepages($reviewcount,$yahooid));
+
+		}
+	}
+
+	private function generatepages($reviewcount,$yahooid){
+		//http://travel.yahoo.com/p-reviews-2828942-prod-travelguide-action-read-ratings_and_reviews-i;_ylt=AvJ6MN_.e2JPtvR_vZSzzUGGFmoL
+		$url[] = 'http://travel.yahoo.com/p-reviews-'.$yahooid.'-prod-travelguide-action-read-ratings_and_reviews-i';
+		if($reviewcount > 10){
+			$pages = $reviewcount/10;
+			if(!$reviewcount%10){
+				$pages--;
+			}
+			for($page_index=1;$page_index < $pages;$page_index++){
+				$url[] = 'http://travel.yahoo.com/p-reviews-'.$yahooid.'-action-read-from-'.($page_index*10+1).'-prod-travelguide-ratings_and_reviews-i';
+			}
+		}
+		return($url);
 	}
 }
 ?>
