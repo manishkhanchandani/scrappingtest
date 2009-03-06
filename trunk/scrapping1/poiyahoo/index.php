@@ -1,7 +1,7 @@
 <?php require_once('../Connections/conn.php'); ?>
 <?php
 mysql_select_db($database_conn, $conn);
-$query_rsView = "SELECT count(a.province) as cnt, a.province, b.cnt as cntTotalPoi, d.cnt as cntTotalPoiFound, e.cnt as cnttotalpoinotcompleted, f.cnt as cnttotalpoicompleted FROM us_xml_yahoo as a LEFT JOIN  totalpoi as b ON a.province = b.province LEFT JOIN totalpoicompleted as c ON a.province = c.province LEFT JOIN totalpoifound as d ON a.province = d.province LEFT JOIN totalpoinotcompleted as e ON a.province = e.province LEFT JOIN totalpoicompleted as f ON a.province = f.province GROUP BY a.province";
+$query_rsView = "SELECT count(a.province) as cnt, a.province, b.cnt as cntTotalPoi, d.cnt as cntTotalPoiFound, e.cnt as cnttotalpoinotcompleted, f.cnt as cnttotalpoicompleted, g.cnt as reviewfound FROM us_xml_yahoo as a LEFT JOIN  totalpoi as b ON a.province = b.province LEFT JOIN totalpoicompleted as c ON a.province = c.province LEFT JOIN totalpoifound as d ON a.province = d.province LEFT JOIN totalpoinotcompleted as e ON a.province = e.province LEFT JOIN totalpoicompleted as f ON a.province = f.province LEFT JOIN reviewfound as g ON a.province = g.province GROUP BY a.province";
 $rsView = mysql_query($query_rsView, $conn) or die(mysql_error());
 $row_rsView = mysql_fetch_assoc($rsView);
 $totalRows_rsView = mysql_num_rows($rsView);
@@ -27,7 +27,7 @@ body {
     <td>&nbsp;</td>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
-    <td colspan="3" align="center"><strong>With Hotel Id </strong></td>
+    <td colspan="5" align="center"><strong>With Hotel Id </strong></td>
   </tr>
   <tr>
     <td>&nbsp;</td>
@@ -36,6 +36,8 @@ body {
     <td><strong>Total Poi in XML </strong></td>
     <td><strong>Total Poi Found </strong></td>
     <td><strong>Poi Not Found </strong></td>
+    <td><strong>POI With Review </strong></td>
+    <td><strong>POI Without Review </strong></td>
   </tr>
   <?php do { ?>
     <tr>
@@ -46,6 +48,8 @@ body {
       <td><a href="poifound.php?province=<?php echo $row_rsView['province']; ?>" target="_blank"><?php echo $row_rsView['cntTotalPoiFound']; ?>
       <?php if($row_rsView['cntTotalPoi']>0) { ?> [<?php echo number_format(($row_rsView['cntTotalPoiFound']/$row_rsView['cntTotalPoi'])*100,2); ?> %]<?php } ?></a></td>
       <td><a href="nopoifound.php?province=<?php echo $row_rsView['province']; ?>"><?php echo $notfound = $row_rsView['cntTotalPoi']-$row_rsView['cntTotalPoiFound']; ?> <?php if($row_rsView['cntTotalPoi']>0) { ?> [<?php echo number_format(($notfound/$row_rsView['cntTotalPoi'])*100,2); ?> %]<?php } ?></a></td>
+      <td><?php echo $row_rsView['reviewfound']; ?></td>
+      <td><?php echo $row_rsView['cntTotalPoi']-$row_rsView['reviewfound']; ?></td>
     </tr>
     <?php } while ($row_rsView = mysql_fetch_assoc($rsView)); ?>
     <tr>
@@ -53,6 +57,8 @@ body {
       <td><?php echo $totcnt; ?></td>
       <td>&nbsp;</td>
       <td><?php echo $totcntPoi; ?>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
       <td>&nbsp;</td>
       <td>&nbsp;</td>
     </tr>
