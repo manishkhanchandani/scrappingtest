@@ -1,0 +1,1 @@
+ALTER TABLE `us_xml_yahoo` ADD `reviewfound` INT( 11 ) NOT NULL DEFAULT '-1' AFTER `gotpoi` ;
