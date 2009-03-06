@@ -309,5 +309,11 @@ class Yahoo {
 		}
 		return($url);
 	}
+
+	private function changeip($ndex){
+		$ipfilename = 'c:\ip\rel'.($index%5).'.txt';
+		exec("netsh -f $ipfilename");
+	}
+
 }
 ?>

@@ -68,6 +68,7 @@ no record found.
 	echo $index;
 	echo "<hr>";
 	$Yahoo->getTotalReview($province, $id);
+	$Yahoo->changeip($index);
 
 
 //exit;
