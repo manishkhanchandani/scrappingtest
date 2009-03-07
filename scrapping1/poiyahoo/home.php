@@ -43,10 +43,10 @@ body {
     <tr>
       <td><?php echo $row_rsView['cnt']; ?></td>
       <td><?php echo $row_rsView['province']; ?></td>
-      <td><a href="parse1.php" target="_blank">Parsing 1 </a> [Done]</td>
-      <td background="parse2.php"><a href="parse1.php" target="_blank">Parsing 2 </a> [Done]</td>
-      <td background="parse2.php"><strong>Parsing 3 </strong> [Pending]</td>
-      <td background="parse2.php"><a href="parse4.php" target="_blank">Clean up</a> [In Progress]</td>
+      <td><a href="parse1.php?province=<?php echo $row_rsView['province']; ?>" target="_blank">Parsing 1</a> [Done]</td>
+      <td><a href="parse2.php?province=<?php echo $row_rsView['province']; ?>" target="_blank">Parsing 2</a> [Done]</td>
+      <td><strong>Parsing 3</strong> [Pending]</td>
+      <td><a href="parse4.php?province=<?php echo $row_rsView['province']; ?>" target="_blank">Clean up</a> [In Progress]</td>
     </tr>
     <?php } while ($row_rsView = mysql_fetch_assoc($rsView)); ?>
 </table>
