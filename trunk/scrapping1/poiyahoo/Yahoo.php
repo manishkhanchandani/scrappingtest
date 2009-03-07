@@ -312,9 +312,77 @@ class Yahoo {
 		return($url);
 	}
 
-	private function changeip($ndex){
+	public function changeip($ndex){
 		$ipfilename = 'c:\ip\rel'.($index%5).'.txt';
 		exec("netsh -f $ipfilename");
+	}
+	
+	public function logic1($id, $province, $arrData, $pattern) {
+		$file = $this->yahooBaseFiles."/".$province."/".$id.".html";
+		$base_search_content = file_get_contents($file);
+		if(eregi("Sorry we did not find", $base_search_content)){			
+			$crawl = $this->crawlSearchPageMod($arrData, $pattern, $province, $id);
+			if($crawl) return $crawl;
+		} else {
+			if(eregi("Travel Guides", $base_search_content)){					
+				$dir = $this->yahooFirstFiles."/".$province;
+				$file2 = $dir."/".$id.".html";			
+				$regexp = "<div class=\"textA\"><a href=\"(.*)\">.*<\/a><\/div>";
+				if(preg_match_all("/$regexp/siU", $base_search_content, $matches, PREG_SET_ORDER)) {					
+					foreach($matches as $k=>$links) {	
+						$arrTemp = explode('"',$links[1]);					
+						$arr['url'][] = $arrTemp[0];	
+						//echo "Searching: ".$arrTemp[0]."<br />";				
+						//$result = $this->curlPage($arrTemp[0]);
+						$result = file_get_contents($arrTemp[0]);
+						if(eregi($pattern, $result) && eregi("Overview", $result)) {
+							$fp = file_put_contents($file2, $result);
+							$sql = "update us_xml_yahoo set firsturl = '".$this->clean($arrTemp[0])."', firsturlflag = 1, gotpoi = 1, flag_2nd = 1 WHERE id = '".$id."'";
+							echo $sql;
+							echo "<br>";							
+							mysql_query($sql) or die(mysql_error());
+							return $arrTemp[0];
+						} 			
+					}					
+				}					
+			}		
+		}
+		$sql = "update us_xml_yahoo set flag_2nd = 1 WHERE id = '".$id."'";
+		echo $sql;
+		echo "<br>";
+		mysql_query($sql) or die(mysql_error());
+		return false;
+	}
+	
+	public function crawlSearchPageMod($arrData, $pattern, $province, $id) {
+		$dir = $this->yahooFirstFiles."/".$province;
+		$file = $dir."/".$id.".html";
+		$new_search_url = "http://travel.yahoo.com/bin/search/travel;_ylt=?p=".urlencode($arrData['streetAddress1']." ".$arrData['city']);
+		$new_contents = file_get_contents($new_search_url);
+		if(eregi("Sorry we did not find", $new_contents)){
+			return false;
+		} else {				
+			if(eregi("Travel Guides", $new_contents)){				
+				$regexp = "<div class=\"textA\"><a href=\"(.*)\">.*<\/a><\/div>";
+				if(preg_match_all("/$regexp/siU", $new_contents, $matches, PREG_SET_ORDER)) {					
+					foreach($matches as $k=>$links) {	
+						$arrTemp = explode('"',$links[1]);					
+						$arr['url'][] = $arrTemp[0];						
+						//$result = $this->curlPage($arrTemp[0]);
+						$result = file_get_contents($arrTemp[0]);
+						if(eregi($pattern, $result) && eregi("Overview", $result)) {
+							$fp = file_put_contents($file, $result);
+							$sql = "update us_xml_yahoo set firsturl = '".$this->clean($url)."', firsturlflag = 1, gotpoi = 1, baseurl = '".$this->clean($new_search_url)."', baseurlflag = 1, flag_2nd = 1 WHERE id = '".$id."'";
+							echo $sql;
+							echo "<br>";
+							mysql_query($sql) or die(mysql_error());
+							return $arrTemp[0];
+						} 			
+					}					
+				}					
+			}							
+		}
+		return false;
 	}
 
 }

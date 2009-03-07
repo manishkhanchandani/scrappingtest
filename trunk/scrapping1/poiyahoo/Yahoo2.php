@@ -296,7 +296,6 @@ class Yahoo {
 		if(eregi("Sorry we did not find", $base_search_content)){			
 			$crawl = $this->crawlSearchPageMod($arrData, $pattern, $province, $id);
 			if($crawl) return $crawl;
-			else return false;
 		} else {
 			if(eregi("Travel Guides", $base_search_content)){					
 				$dir = $this->yahooFirstFiles."/".$province;
@@ -311,14 +310,20 @@ class Yahoo {
 						$result = file_get_contents($arrTemp[0]);
 						if(eregi($pattern, $result) && eregi("Overview", $result)) {
 							$fp = file_put_contents($file2, $result);
-							$sql = "update us_xml_yahoo set firsturl = '".$this->clean($url)."', firsturlflag = 1 WHERE id = '".$id."'";
-							mysql_query($sql) or die(mysql_error());
+							$sql = "update us_xml_yahoo set firsturl = '".$this->clean($arrTemp[0])."', firsturlflag = 1, gotpoi = 1, flag_2nd = 1 WHERE id = '".$id."'";
+							echo $sql;
+							echo "<br>";							
+							//mysql_query($sql) or die(mysql_error());
 							return $arrTemp[0];
 						} 			
 					}					
 				}					
 			}		
 		}
+		$sql = "update us_xml_yahoo set flag_2nd = 1 WHERE id = '".$id."'";
+		echo $sql;
+		echo "<br>";
+		//mysql_query($sql) or die(mysql_error());
 		return false;
 	}
 	
@@ -340,8 +345,10 @@ class Yahoo {
 						$result = file_get_contents($arrTemp[0]);
 						if(eregi($pattern, $result) && eregi("Overview", $result)) {
 							$fp = file_put_contents($file, $result);
-							$sql = "update us_xml_yahoo set firsturl = '".$this->clean($url)."', firsturlflag = 1 WHERE id = '".$id."'";
-							mysql_query($sql) or die(mysql_error());
+							$sql = "update us_xml_yahoo set firsturl = '".$this->clean($url)."', firsturlflag = 1, gotpoi = 1, baseurl = '".$this->clean($new_search_url)."', baseurlflag = 1, flag_2nd = 1 WHERE id = '".$id."'";
+							echo $sql;
+							echo "<br>";
+							//mysql_query($sql) or die(mysql_error());
 							return $arrTemp[0];
 						} 			
 					}					
