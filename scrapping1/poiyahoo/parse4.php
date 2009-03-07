@@ -50,6 +50,11 @@ do {
 		echo 'poi not found<br />';
 		//$Yahoo->updateGotPoi($id, $gotPoi=0, $baseurl, '', '');
 	}	  
+	  static $index = 0;
+	$index++;
+	echo $index;
+	echo "<hr>";
+	$Yahoo->changeip($index);
 	  flush();
 } while ($row_rsPoi = mysql_fetch_assoc($rsPoi)); 
    echo '<meta http-equiv="refresh" content="30" />';
