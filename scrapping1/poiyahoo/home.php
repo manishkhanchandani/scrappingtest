@@ -27,16 +27,16 @@ body {
     <td>&nbsp;</td>
     <td>&nbsp;</td>
     <td align="center"><strong>Parsing 1 </strong></td>
-    <td align="center"><strong>Parsing2</strong></td>
-    <td align="center"><strong>Parsing 3</strong></td>
+    <td align="center"><strong>Parsing 2</strong></td>
+	<td align="center"><strong>Parsing 3</strong></td>
     <td align="center"><strong>Parsing 4 </strong></td>
   </tr>
   <tr>
     <td><strong>Count</strong></td>
     <td><strong>Province</strong></td>
     <td><strong>Fetching from yahoo search </strong></td>
-    <td><strong>Fetching Reviews and review count </strong></td>
-    <td><strong>Getting reviews and putting in db </strong></td>
+    <td><strong>Fetching review count </strong></td>
+    <td><strong>Fetching Reviews</strong></td>
     <td><strong>Clean up </strong></td>
   </tr>
   <?php do { ?>
@@ -45,7 +45,7 @@ body {
       <td><?php echo $row_rsView['province']; ?></td>
       <td><a href="parse1.php?province=<?php echo $row_rsView['province']; ?>" target="_blank">Parsing 1</a> [Done]</td>
       <td><a href="parse2.php?province=<?php echo $row_rsView['province']; ?>" target="_blank">Parsing 2</a> [Done]</td>
-      <td><strong>Parsing 3</strong> [Pending]</td>
+     <td><a href="fetchreviews.php?province=<?php echo $row_rsView['province']; ?>" target="_blank">Parsing 3</a> [In Progress]</td>
       <td><a href="parse4.php?province=<?php echo $row_rsView['province']; ?>" target="_blank">Clean up</a> [In Progress]</td>
     </tr>
     <?php } while ($row_rsView = mysql_fetch_assoc($rsView)); ?>
