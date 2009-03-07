@@ -52,18 +52,21 @@ $ok = @mail($email_to, $email_subject, $email_message, $headers);
 		//die("Sorry but the email could not be sent. Please go back and try again!"); 
 	} 
 }
-function backup($tbl, $send_mail, $email="", $database, $datas, $structure) {
+function backup($s, $m, $tbl, $send_mail, $email="", $database, $datas, $structure) {
 	//$return = "DROP DATABASE `".$database."`;\nCREATE DATABASE `".$database."`;\n\n USE `".$database."`;\n\n ";
 	//$return = "";
 	$date = date("Y-m-d_h-m-s");
-	$dir = "backupsql/".$date;
-	if(is_dir($dir)) {
-	} else {
-		mkdir($dir, 0777);
-		chmod($dir, 0777);
-	}
 	if($tbl) {
 		foreach($tbl as $value) {
+			$dir = "backupsql/".$value;				
+				
+			echo $dir;
+			echo "<br><br>";
+			
+			if(!is_dir($dir)) {
+				mkdir($dir, 0777);
+				chmod($dir, 0777);
+			}
 			$key = $value;
 			// getting structure
 			echo $query = "show create table `".$key."`";
@@ -72,7 +75,7 @@ function backup($tbl, $send_mail, $email="", $database, $datas, $structure) {
 			$rec = mysql_fetch_array($rs);
 			$tableStructure .= $rec[1].";\n\n";
 			
-			$fp = fopen($dir."/".$tbl."_dbstructure.sql","w");
+			$fp = fopen($dir."/".$key."_dbstructure.sql","w");
 			fwrite($fp, $tableStructure);
 			fclose($fp);
 			if($structure==1) {
@@ -85,11 +88,18 @@ function backup($tbl, $send_mail, $email="", $database, $datas, $structure) {
 			$rsCnt = mysql_query('select count(*) as cnt from '.$key) or die('error');
 			$recCnt = mysql_fetch_array($rsCnt);
 			$cnt = $recCnt['cnt'];
-			$max = 5000;
+			
+			$max = 10000;
+			if($m) $max = $m;
+			if(!$s) $startCounter = 0; else $startCounter = $s;
+			
 			$totalPages = ceil($cnt/$max)-1;
-			for($counter=0;$counter<$totalPages;$counter++) {
-				$start = $max*$counter;
-				echo "Start: $start, max: $max, counter: $counter<br>";
+			echo "Start: ".$startCounter." , max: $max , cnt: $cnt Total pages: $totalPages<hr>";
+			for($counter=$startCounter;$counter<=$totalPages;$counter++) {
+				echo $counter;
+				echo "<br>";
+				echo $start = $max*$counter;
+				echo "<hr>";
 				echo $sql='select * from `'.$key.'` LIMIT '.$start.', '.$max;
 				echo "<br>";
 				flush();
@@ -111,11 +121,14 @@ function backup($tbl, $send_mail, $email="", $database, $datas, $structure) {
 					$fulldata .= $query.";\n";
 				}		
 				//$return .= $data;
-				//$return .= "\n\n";					
-				
-				$fp = fopen($dir."/".$tbl."_dbdata_".$counter.".sql","w");
+				//$return .= "\n\n";	
+				$fp = fopen($dir."/".$key."_dbdata_".$counter.".sql","w");
 				fwrite($fp, $fulldata);
 				fclose($fp);
+				echo $dir."/".$key."_dbdata_".$counter.".sql is done<br>";
+				echo $counter;
+				echo "<hr>";
+				flush();
 				//if($datas==1) {
 					//$complete .= $fulldata;
 				//}
@@ -134,14 +147,9 @@ function backup($tbl, $send_mail, $email="", $database, $datas, $structure) {
 	return true;
 }
 
-$date = date("Y-m-d_h-m-s");
-$dir = $dir = "backupsql/".$date;
-if(is_dir($dir)) {
-	
-} else {
-	mkdir($dir, 0777);
-	chmod($dir, 0777);
-}
+$tblg = $_GET['t']; if(!$tblg) { echo 'choose table'; exit; }
+$s = $_GET['s']; 
+$m = $_GET['m'];
 /*
 $sql = "SHOW TABLES FROM ".$database_conn;
 $result = mysql_query($sql);
@@ -150,9 +158,8 @@ while ($row = mysql_fetch_row($result)) {
 	$tbls[] = $row[0];
 }
 */
-$tblg = $_GET['t']; if(!$tblg) { echo 'choose table'; exit; }
 $tbls = array($tblg);
 $email = "naveenkhanchandani@gmail.com";
-$return = backup($tbls, $send_mail=1, $email, $database_conn, 1, 1);
+$return = backup($s, $m, $tbls, $send_mail=1, $email, $database_conn, 1, 1);
 //echo nl2br(htmlentities($return));
 ?>
