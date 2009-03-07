@@ -1,0 +1,1 @@
+ALTER TABLE `us_xml_yahoo` ADD `reviewfetchflag` INT( 1 ) NOT NULL DEFAULT '0' AFTER `reviewfound` ;
