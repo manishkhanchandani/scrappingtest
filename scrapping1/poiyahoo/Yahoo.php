@@ -385,5 +385,193 @@ class Yahoo {
 		return false;
 	}
 
+	public function fetchReviews($data){
+		
+//		print $contents;
+//		print_r($data);
+		$urls = unserialize($data['reviewurl']);
+		$type = $this->fetchtype($urls[0]);
+		if(count($urls) > 1){
+				//check for type
+			//do stuff for pagination
+			for($index=0;$index < count($urls);$index++){
+				if($index==0)
+					$file = $this->yahooreviewFiles."/".$data['province']."/".$data['id'].".html";
+				else
+					$file = $this->yahooreviewFiles."/".$data['province']."/".$data['id']."_".$index.".html";
+				$contents = file_get_contents($file);
+				require_once "domutilities.php";
+				$DOMdoc = new DOMDocument();
+				ob_start();
+				@ $DOMdoc->loadHTML($contents);
+				ob_end_clean();
+
+				//fetch reviews
+				if($type == 'travelguide'){
+					print("parseTrvReviewsPOI");
+					$ReviewdataArray=$this->parseTrvReviewsPOI($DOMdoc);
+				}else{
+					print("parseTrvReviews");	
+					$ReviewdataArray=$this->parseTrvReviews($DOMdoc);
+				}
+			
+				//store reviews
+			
+				$this->storereviews($ReviewdataArray,$urls[$index],$data['id'],$data['province'],$data['xmlpath'],$data['hotel_id']);
+			
+			}
+		}else{
+			// do only once
+			//check for type 
+			
+			//fetch reviews
+			$file = $this->yahooreviewFiles."/".$data['province']."/".$data['id'].".html";
+			$contents = file_get_contents($file);
+			require_once "domutilities.php";
+			$DOMdoc = new DOMDocument();
+			ob_start();
+			@ $DOMdoc->loadHTML($contents);
+			ob_end_clean();
+			
+			if($type == 'travelguide')
+				$ReviewdataArray=$this->parseTrvReviewsPOI($DOMdoc);
+			else
+				$ReviewdataArray=$this->parseTrvReviews($DOMdoc);
+
+			//store reviews
+			$this->storereviews($ReviewdataArray,$urls[0],$data['id'],$data['province'],$data['xmlpath'],$data['hotel_id']);
+
+		}
+		//update flag for reviews fetched
+		$this->updatereviewfetched($data['id']);
+	}
+
+	private function parseTrvReviewsPOI($DOMdoc2){
+		$Hname=$this->parseYelm($DOMdoc2,'div','class','poiCityName',false);
+		$Title=$this->parseYelm($DOMdoc2,'div','class','title',false);
+		$Author=$this->parseYelm($DOMdoc2,'div','class','author',false);
+		$regexp = "^By (.*)\, (.*)$";
+		foreach($Author as $author_string){
+			if(preg_match_all("/$regexp/siU", $author_string, $matches, PREG_SET_ORDER)) {
+				$authors[] = $matches[0][1];
+				$dates[] = $matches[0][2];
+			}
+		}
+		$Body=$this->parseYelm($DOMdoc2,'div','class','body',false);
+		$Rating=$this->ParsePage($DOMdoc2,'img','src','http:\/\/l\.yimg\.com\/a\/i\/us\/sh\/karma\/ur_star_',false);
+		$regexp='http:\/\/l\.yimg\.com\/a\/i\/us\/sh\/karma\/ur_star_(.*)\.gif';
+		foreach($Rating as $rate){
+			if(preg_match_all("/$regexp/siU", $rate, $matches, PREG_SET_ORDER)) {
+				$final_rating[]= $matches[0][1];
+			}
+		}
+		for($counter=0;$counter< count($authors);$counter++){
+			$temp['name_poi'] = str_replace(' - Reviews', '', $Hname[0]);
+			$temp['title'] = $Title[$counter +1];
+			$temp['username'] = $authors[$counter];
+			$temp['date'] = $dates[$counter];
+			$temp['reviewdetail'] = substr($Body[$counter], 0, 149);
+			$temp['rating'] = $final_rating[$counter +1];
+			$temp['overall_rating'] = $final_rating[0];
+			//$temp['link'] = $final_rating[0];
+			$reviewDataArray[$counter] = $temp;
+		}
+		return($reviewDataArray);
+	}
+
+	private function parseTrvReviews($DOMdoc2) {
+		$Hname = $this->parseYelm($DOMdoc2, 'div', 'class', 'hotelName', false);
+		$Title = $this->parseYelm($DOMdoc2, 'div', 'class', 'title', false);
+		$Author = $this->parseYelm($DOMdoc2, 'div', 'class', 'author', false);
+		$regexp = "^By(.*)\, (.*)$";
+		foreach ($Author as $author_string) {
+			if (preg_match_all("/$regexp/siU", $author_string, $matches, PREG_SET_ORDER)) {
+				$authors[] = trim($matches[0][1]);
+				$dates[] = trim($matches[0][2]);
+			}
+		}
+
+		$Body = $this->parseYelm($DOMdoc2, 'div', 'class', 'body', false);
+
+		$Rating = $this->ParsePage($DOMdoc2, 'img', 'src', 'http:\/\/l\.yimg\.com\/a\/i\/us\/sh\/karma\/ur_star_', false);
+		$regexp = 'http:\/\/l\.yimg\.com\/a\/i\/us\/sh\/karma\/ur_star_(.*)\.gif';
+		foreach ($Rating as $rate) {
+			if (preg_match_all("/$regexp/siU", $rate, $matches, PREG_SET_ORDER)) {
+				$final_rating[] = $matches[0][1];
+			}
+		}
+
+		for ($counter = 0; $counter < count($authors); $counter++) {
+			$temp['name_poi'] = str_replace(' -  Reviews', '', $Hname[0]);
+			$temp['title'] = $Title[$counter +1];
+			$temp['username'] = $authors[$counter];
+			$temp['date'] = $dates[$counter];
+			$temp['reviewdetail'] = substr($Body[$counter], 0, 149);
+			$temp['rating'] = $final_rating[$counter +1];
+			$temp['overall_rating'] = $final_rating[0];
+			//$temp['link'] = $final_rating[0];
+			$reviewDataArray[$counter] = $temp;
+		}
+		//print "<br><br>Review Body<pre>##";
+		//print_r($reviewDataArray);
+		//print "##<\pre><br><br>";
+		return ($reviewDataArray);
+	}
+
+	private function ParsePage($doc,$tag,$attr,$val){
+		foreach ($doc->getElementsByTagName($tag) as $a){
+			$href = $a->getAttribute($attr);
+			if ($href){
+				$pattern = '/^'.$val.'/';
+					preg_match($pattern, $href, $matches);
+					if(!empty($matches))
+						$retOut[] = $href;
+			}
+		}
+		return ($retOut);
+	}
+
+	private function storereviews($reviewsarray,$reviewurl,$id,$province,$file,$poi_id){
+		for ($i = 0; $i < count($reviewsarray); $i++) {
+			$sql = "insert into poi_detail_yahoo(id,poi_id,poi_name,reviewer,reviewdate,review_title,rating,review_detail,source,filename,targetSite,avgrating,xml_id,province)values('',
+								'" . $this->cleanDATA($poi_id) . "',
+								'" . $this->cleanDATA($reviewsarray[$i]['name_poi']) . "',
+								'" . $this->cleanDATA($reviewsarray[$i]['username']) . "',
+								'" . $this->cleanDATA($reviewsarray[$i]['date']) . "',
+								'" . $this->cleanDATA($reviewsarray[$i]['title']) . "',
+								'" . $this->cleanDATA($reviewsarray[$i]['rating']) . "',
+								'" . $this->cleanDATA($reviewsarray[$i]['reviewdetail']) . "',
+								'" . $this->cleanDATA($reviewurl) . "',
+								'" . $this->cleanDATA($file) . "',
+								'" . $this->cleanDATA('http://travel.yahoo.com') . "',
+								'" . $this->cleanDATA($reviewsarray[$i]['overall_rating']) . "',
+								'" . $id."',
+								'" . $province."'
+								);";
+		echo $sql."<br>";
+		mysql_query($sql) or die(mysql_error());
+		}
+	}
+
+	private function cleanDATA($str) {
+		return addslashes(strip_tags(trim($str)));
+	}
+
+	private function fetchtype($href){
+		if ($href) {
+				$regexp = "p\-reviews\-(.*)\-prod\-(.*)\-action\-read\-ratings_and_reviews\-i";
+				$matches = $this->regexp($regexp, $href);
+				print_r($matches);
+				if (!empty ($matches)) {
+					return($matches[0][2]);
+				}
+			}
+	}
+	private function updatereviewfetched ($id) {
+		$sql = "update us_xml_yahoo set reviewsfetchflag  = 1 WHERE id = '".$id."'";
+		echo $sql."<br>";
+		mysql_query($sql) or die(mysql_error());
+	}
+
 }
 ?>
