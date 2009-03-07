@@ -1,5 +1,5 @@
 <?php require_once('../Connections/conn.php'); ?>
-<?php require_once('Yahoo2.php'); ?>
+<?php require_once('Yahoo.php'); ?>
 <?php
 
 
