@@ -8,6 +8,7 @@ if(!$_GET['province']){
 	echo "Please enter a province";
 	exit;
 }
+$limit = $_GET['limit']; if(!$limit) $limit = 25;
 $Yahoo = new Yahoo;
 $colname_rsPoi = "%";
 if (isset($_GET['province'])) {
@@ -15,10 +16,11 @@ if (isset($_GET['province'])) {
 }
 
 mysql_select_db($database_conn, $conn);
-$query_rsPoi = sprintf("SELECT * FROM us_xml_yahoo WHERE province LIKE '%s' AND gotpoi = 0 AND flag_2nd = 0 LIMIT 1", $colname_rsPoi);
+$query_rsPoi = sprintf("SELECT * FROM us_xml_yahoo WHERE province LIKE '%s' AND gotpoi = 0 AND flag_2nd = 0 LIMIT $limit", $colname_rsPoi);
 $rsPoi = mysql_query($query_rsPoi, $conn) or die(mysql_error());
 $row_rsPoi = mysql_fetch_assoc($rsPoi);
 $totalRows_rsPoi = mysql_num_rows($rsPoi);
+if($totalRows_rsPoi) {
 do { 
 	print_r($row_rsPoi);
 	$id = $row_rsPoi['id'];
@@ -48,10 +50,12 @@ do {
 		echo 'poi not found<br />';
 		//$Yahoo->updateGotPoi($id, $gotPoi=0, $baseurl, '', '');
 	}	  
-	  
+	  flush();
 } while ($row_rsPoi = mysql_fetch_assoc($rsPoi)); 
-   
-   
+   echo '<meta http-equiv="refresh" content="30" />';
+} else {
+	echo 'no record found';
+} 
    
 mysql_free_result($rsPoi);
 ?>
