@@ -50,14 +50,12 @@ do {
 		echo 'poi not found<br />';
 		//$Yahoo->updateGotPoi($id, $gotPoi=0, $baseurl, '', '');
 	}	  
-	  static $index = 0;
-	$index++;
-	echo $index;
-	echo "<hr>";
+	  $index = $_GET['i'];
 	$Yahoo->changeip($index);
+	sleep(10);
 	  flush();
 } while ($row_rsPoi = mysql_fetch_assoc($rsPoi)); 
-   echo '<meta http-equiv="refresh" content="30" />';
+   echo '<meta http-equiv="refresh" content="30;URL=parse.php?i='.($_GET['i']+1).'" />';
 } else {
 	echo 'no record found';
 } 
