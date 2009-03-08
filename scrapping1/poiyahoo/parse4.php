@@ -18,7 +18,7 @@ if (isset($_GET['province'])) {
 
 mysql_select_db($database_conn, $conn);
 $query_rsPoi = sprintf("SELECT * FROM us_xml_yahoo WHERE province LIKE '%s' AND gotpoi = 0 AND flag_2nd = 0 LIMIT $limit", $colname_rsPoi);
-$rsPoi = mysql_query($query_rsPoi, $conn) or die(mysql_error());
+$rsPoi = mysql_query($query_rsPoi, $conn) or die(mysql_error().'<meta http-equiv="refresh" content="5" />');
 $row_rsPoi = mysql_fetch_assoc($rsPoi);
 $totalRows_rsPoi = mysql_num_rows($rsPoi);
 if($totalRows_rsPoi) {
