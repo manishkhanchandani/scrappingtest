@@ -1,7 +1,8 @@
 <?php require_once('../Connections/conn.php'); ?>
 <?php require_once('Yahoo.php'); ?>
 <?php
-
+ini_set('memory_limit', '500M');
+ini_set('max_execution_time', '-1');
 
 if(!$_GET['province']){
 
@@ -55,7 +56,7 @@ do {
 	sleep(10);
 	  flush();
 } while ($row_rsPoi = mysql_fetch_assoc($rsPoi)); 
-   echo '<meta http-equiv="refresh" content="30;URL=parse.php?province='.$_GET['province'].'&i='.($_GET['i']+1).'" />';
+   echo '<meta http-equiv="refresh" content="30;URL=parse4.php?province='.$_GET['province'].'&i='.($_GET['i']+1).'" />';
 } else {
 	echo 'no record found';
 } 
