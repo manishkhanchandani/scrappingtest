@@ -6,6 +6,6 @@ $hostname_conn = "220.227.198.8";
 $database_conn = "scrapping";
 $username_conn = "user";
 $password_conn = "password";
-$conn = mysql_connect($hostname_conn, $username_conn, $password_conn) or trigger_error(mysql_error(),E_USER_ERROR); 
-mysql_select_db($database_conn, $conn);
+$conn = mysql_connect($hostname_conn, $username_conn, $password_conn) or die(mysql_error().'<meta http-equiv="refresh" content="5" />');
+mysql_select_db($database_conn, $conn) or die(mysql_error().'<meta http-equiv="refresh" content="5" />');
 ?>
