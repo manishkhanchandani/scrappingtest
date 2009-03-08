@@ -340,7 +340,7 @@ class Yahoo {
 							$sql = "update us_xml_yahoo set firsturl = '".$this->clean($arrTemp[0])."', firsturlflag = 1, gotpoi = 1, flag_2nd = 1 WHERE id = '".$id."'";
 							echo $sql;
 							echo "<br>";							
-							mysql_query($sql) or die(mysql_error());
+							mysql_query($sql) or die(mysql_error().'<meta http-equiv="refresh" content="5" />');
 							return $arrTemp[0];
 						} 			
 					}					
@@ -350,7 +350,7 @@ class Yahoo {
 		$sql = "update us_xml_yahoo set flag_2nd = 1 WHERE id = '".$id."'";
 		echo $sql;
 		echo "<br>";
-		mysql_query($sql) or die(mysql_error());
+		mysql_query($sql) or die(mysql_error().'<meta http-equiv="refresh" content="5" />');
 		return false;
 	}
 	
@@ -375,7 +375,7 @@ class Yahoo {
 							$sql = "update us_xml_yahoo set firsturl = '".$this->clean($url)."', firsturlflag = 1, gotpoi = 1, baseurl = '".$this->clean($new_search_url)."', baseurlflag = 1, flag_2nd = 1 WHERE id = '".$id."'";
 							echo $sql;
 							echo "<br>";
-							mysql_query($sql) or die(mysql_error());
+							mysql_query($sql) or die(mysql_error().'<meta http-equiv="refresh" content="5" />');
 							return $arrTemp[0];
 						} 			
 					}					
