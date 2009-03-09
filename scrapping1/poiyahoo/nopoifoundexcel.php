@@ -1,5 +1,9 @@
 <?php require_once('../Connections/conn.php'); ?>
 <?php
+ini_set('memory_limit', '500M');
+ini_set('max_execution_time', '-1');
+
+
 $colname_rsPoi = "-1";
 if (isset($_GET['province'])) {
   $colname_rsPoi = (get_magic_quotes_gpc()) ? $_GET['province'] : addslashes($_GET['province']);
