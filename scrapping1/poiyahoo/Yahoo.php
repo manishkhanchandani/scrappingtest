@@ -108,12 +108,12 @@ class Yahoo {
 		if (empty ($data)) {
 			print ("<br>\n There are no reviews for the following hotel \n<br>");
 		}
-		$pattern = '/Read [0-9]* Reviews/';
+		$pattern = '/Read [0-9]* Review/';
 		preg_match($pattern, $data[0], $matches);
 		//var_dump($matches);
 		
 		if (!empty ($matches)) {
-//			print_r($matches);
+			//print_r($matches);
 			$reviews_array = explode(' ',$matches[0]);
 			//print_r($reviews_array);
 			$totalreviews = $reviews_array[1]; 
