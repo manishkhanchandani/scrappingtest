@@ -46,7 +46,7 @@ $queryString_rsPoi = sprintf("&totalRows_rsPoi=%d%s", $totalRows_rsPoi, $querySt
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Poi Found</title>
+<title>Poi Found No Reviews</title>
 <style type="text/css">
 <!--
 body {
@@ -58,7 +58,7 @@ body {
 </head>
 
 <body>
-<h1>Poi Found</h1>
+<h1>Poi Found :: No Reviews</h1>
 <?php if ($totalRows_rsPoi > 0) { // Show if recordset not empty ?>
   <table border="1" cellpadding="5" cellspacing="0">
     <tr>
