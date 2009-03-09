@@ -11,7 +11,7 @@ sn_status:
 */
 $regexp = "<div class=\"basedon\">Read.*<a.*>(.*)Review.*<\/div>";
 $st = "KS";
-echo $sql = "select * from us_xml_yahoo where hotel_id != 0 and sn_status = -1 and firsturl != '' and province='".$st."' limit 10";
+echo $sql = "select * from us_xml_yahoo where hotel_id != 0 and sn_status = -1 and firsturl != '' and province='".$st."'";
 $rs = mysql_query($sql) or die('error in sql');            
 while($rec = mysql_fetch_array($rs)) {
 	$status = -1;
