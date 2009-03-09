@@ -1,7 +1,7 @@
 <?php require_once('../Connections/conn.php'); ?>
 <?php
 mysql_select_db($database_conn, $conn);
-$query_rsView = "SELECT count(a.province) as cnt, a.province, b.cnt as cntTotalPoi, d.cnt as cntTotalPoiFound, e.cnt as cnttotalpoinotcompleted, f.cnt as cnttotalpoicompleted, g.cnt as reviewfound FROM us_xml_yahoo as a LEFT JOIN  totalpoi as b ON a.province = b.province LEFT JOIN totalpoicompleted as c ON a.province = c.province LEFT JOIN totalpoifound as d ON a.province = d.province LEFT JOIN totalpoinotcompleted as e ON a.province = e.province LEFT JOIN totalpoicompleted as f ON a.province = f.province LEFT JOIN reviewfound as g ON a.province = g.province GROUP BY a.province";
+$query_rsView = "SELECT count(a.province) as cnt, a.province, b.cnt as cntTotalPoi, d.cnt as cntTotalPoiFound, e.cnt as cnttotalpoinotcompleted, f.cnt as cnttotalpoicompleted, g.cnt as reviewfound FROM us_xml_yahoo as a LEFT JOIN  totalpoi as b ON a.province = b.province LEFT JOIN totalpoicompleted as c ON a.province = c.province LEFT JOIN totalpoifound as d ON a.province = d.province LEFT JOIN totalpoinotcompleted as e ON a.province = e.province LEFT JOIN totalpoicompleted as f ON a.province = f.province LEFT JOIN reviewfound as g ON a.province = g.province GROUP BY a.province order by a.province";
 $rsView = mysql_query($query_rsView, $conn) or die(mysql_error());
 $row_rsView = mysql_fetch_assoc($rsView);
 $totalRows_rsView = mysql_num_rows($rsView);
