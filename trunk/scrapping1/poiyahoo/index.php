@@ -50,7 +50,7 @@ body {
       <td><a href="nopoifound.php?province=<?php echo $row_rsView['province']; ?>"><?php echo $notfound = $row_rsView['cntTotalPoi']-$row_rsView['cntTotalPoiFound']; ?> <?php if($row_rsView['cntTotalPoi']>0) { ?> [<?php echo number_format(($notfound/$row_rsView['cntTotalPoi'])*100,2); ?> %]<?php } ?></a></td>
       <td><a href="poifound_reviews.php?province=<?php echo $row_rsView['province']; ?>"><?php echo $row_rsView['reviewfound']; ?></a> 
       <?php if($row_rsView['cntTotalPoi']) { ?>[<?php echo number_format(($row_rsView['reviewfound']/$row_rsView['cntTotalPoi'])*100,2); ?> %]<?php } ?></td>
-      <td><a href="poifound_reviews.php?province=<?php echo $row_rsView['province']; ?>"><?php echo $noreview = $row_rsView['cntTotalPoiFound']-$row_rsView['reviewfound']; ?> <?php if($row_rsView['cntTotalPoi']) { ?>[<?php echo number_format(($noreview/$row_rsView['cntTotalPoi'])*100,2); ?> %]<?php } ?></a></td>
+      <td><a href="poifound_noreviews.php?province=<?php echo $row_rsView['province']; ?>"><?php echo $noreview = $row_rsView['cntTotalPoiFound']-$row_rsView['reviewfound']; ?> <?php if($row_rsView['cntTotalPoi']) { ?>[<?php echo number_format(($noreview/$row_rsView['cntTotalPoi'])*100,2); ?> %]<?php } ?></a></td>
     </tr>
     <?php } while ($row_rsView = mysql_fetch_assoc($rsView)); ?>
     <tr>
