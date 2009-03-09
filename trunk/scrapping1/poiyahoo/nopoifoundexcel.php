@@ -5,7 +5,7 @@ if (isset($_GET['province'])) {
   $colname_rsPoi = (get_magic_quotes_gpc()) ? $_GET['province'] : addslashes($_GET['province']);
 }
 mysql_select_db($database_conn, $conn);
-$query_rsPoi = sprintf("SELECT * FROM us_xml_yahoo WHERE province LIKE '%s' AND gotpoi = 0", $colname_rsPoi);
+$query_rsPoi = sprintf("SELECT * FROM us_xml_yahoo WHERE province LIKE '%s' AND gotpoi = 0 and hotel_id != 0", $colname_rsPoi);
 $rsPoi = mysql_query($query_rsPoi, $conn) or die(mysql_error());
 $row_rsPoi = mysql_fetch_assoc($rsPoi);
 $totalRows_rsPoi = mysql_num_rows($rsPoi);
