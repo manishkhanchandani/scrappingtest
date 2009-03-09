@@ -17,7 +17,7 @@ do {
 	$excel .= $data['name']."\t".$data['city']."\t".$data['state']."\t".$data['phone']."\t".$data['url']."\t".$row_rsPoi['baseurl']."\t".$data['type']."\t".$data['postalCode']."\r\n";
 
 } while ($row_rsPoi = mysql_fetch_assoc($rsPoi)); 
-$filename = "nopoifound_".date('Y_m_d_h_i_s').".xls";
+$filename = $_GET['province']."_nopoifound_".date('Y_m_d_h_i_s').".xls";
 header("Content-type: application/x-msdownload");
 header("Content-Disposition: attachment; filename=$filename");
 header("Pragma: no-cache");
