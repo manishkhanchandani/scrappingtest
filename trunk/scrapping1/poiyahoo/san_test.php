@@ -33,6 +33,8 @@ while($rec = mysql_fetch_array($rs)) {
 				$status = $review;			
 			}			
 		}
+	} else {
+		$status = -2;
 	}
 	echo "Rec: ".$rec['reviewfound'];
 	echo "<br>";
