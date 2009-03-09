@@ -1,0 +1,1 @@
+ALTER TABLE `us_xml_yahoo` ADD `sn_status` INT( 11 ) NOT NULL DEFAULT '-1';
