@@ -31,21 +31,27 @@ class Yahoo {
 			mkdir($dir, 0777);
 			chmod($dir, 0777);
 		}
-		if(file_exists($file)) {
-			$result = file_get_contents($file);	
-		} else {
+		//if(file_exists($file)) {
+		//	$result = file_get_contents($file);	
+		//} else {
 			$result = $this->curlPage($this->url);
 			$fp = file_put_contents($file, $result);
 			$sql = "update us_xml_yahoo set baseurl = '".$this->clean($this->url)."', baseurlflag = 1 WHERE id = '".$id."'";
 			echo $sql."<br>";
 			mysql_query($sql) or die(mysql_error());	
-		}	
+		//}	
 		$regexp = "<div class='ytsVttl'><div class=\"textA\"><a href=\"(.*)\".*>(.*)<\/a><\/div>";
 		$matches = $this->regexp($regexp, $result);
 		if($matches) {
 			foreach($matches as $k=>$links) {
-				$arr[$k]['url'] = $links[1];
-				$arr[$k]['text'] = strip_tags($links[2]);
+				$pattern = '/travel.yahoo.com\/p-travelguide/';
+				preg_match($pattern, $links[1], $matches);
+				if($matches){
+					$arr[$k]['url'] = $links[1];
+					$arr[$k]['text'] = strip_tags($links[2]);
+				}else{
+					return false;
+				}
 			}
 			return $arr;
 		} else {
@@ -218,7 +224,7 @@ class Yahoo {
 		//	$url = $this->get_absolute_url('http://travel.yahoo.com/', $href);
 //			if ($href AND $url) {
 			if ($href) {
-				$pattern = '/p-reviews-[0-9]*-prod-travelguide-action-read-ratings_and_reviews-i/';
+				$pattern = '/p-reviews-[0-9A-Z]*-prod-travelguide-action-read-ratings_and_reviews-i/';
 //				preg_match($pattern, $url, $matches);
 				preg_match($pattern, $href, $matches);
 
