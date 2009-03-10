@@ -44,16 +44,22 @@ class Yahoo {
 		$matches = $this->regexp($regexp, $result);
 		if($matches) {
 			foreach($matches as $k=>$links) {
-				$pattern = '/travel.yahoo.com\/p-travelguide/';
-				preg_match($pattern, $links[1], $matches);
-				if($matches){
-					$arr[$k]['url'] = $links[1];
-					$arr[$k]['text'] = strip_tags($links[2]);
+				$pattern = '/travel.yahoo.com\/p\-travelguide/';
+				preg_match($pattern, $links[1], $matches1);
+				if($matches1){
+					$arr['url'] = $links[1];
+					$arr['text'] = strip_tags($links[2]);
+					$temp[] = $arr;
+				}else{
+					continue;
+				}
+				if($arr){
+					return $temp;
 				}else{
 					return false;
 				}
 			}
-			return $arr;
+			
 		} else {
 			return false;
 		}
