@@ -57,14 +57,21 @@ $totalRows_rsView = mysql_num_rows($rsView);
 $province = $row_rsView['province'];
 $id = $row_rsView['id'];
 $data = unserialize($row_rsView['data']);
-$name = $data['name'];
+$search=array('\'','-');
+$replace=array(' ',' ');
+$name = str_replace($search,$reaplce,$data['name']);
 $city = $data['city'];
+$state = $data['state'];
 $phone = trim($data['phone']);
 $st = trim($data['streetAddress1']);
 echo $Yahoo->url = "http://travel.yahoo.com/bin/search/travel;_ylt=?p=".urlencode($name)."%2C+".urlencode($city);
 echo "<br>";
 $baseurl = $Yahoo->url;
-$allUrls = $Yahoo->crawlSearchPage($province, $id);
+if(!$allUrls = $Yahoo->crawlSearchPage($province, $id)){
+	//do this
+	echo $Yahoo->url = "http://travel.yahoo.com/bin/search/travel;_ylt=?p=".urlencode($name)."%2C+".urlencode($state);
+	$allUrls = $Yahoo->crawlSearchPage($province, $id);
+}
 
 // assume first url is correct
 $urls = $allUrls[0];
