@@ -64,33 +64,39 @@ $city = $data['city'];
 $state = $data['state'];
 $phone = trim($data['phone']);
 $st = trim($data['streetAddress1']);
-echo $Yahoo->url = "http://travel.yahoo.com/bin/search/travel;_ylt=?p=".urlencode($name)."%2C+".urlencode($city);
+echo $Yahoo->url = "http://travel.yahoo.com/bin/search/travel;_ylt=?p=".urlencode($name)."+".urlencode($city);
 echo "<br>";
 $baseurl = $Yahoo->url;
 if(!$allUrls = $Yahoo->crawlSearchPage($province, $id)){
 	//do this
-	echo $Yahoo->url = "http://travel.yahoo.com/bin/search/travel;_ylt=?p=".urlencode($name)."%2C+".urlencode($state);
+	echo $Yahoo->url = "http://travel.yahoo.com/bin/search/travel;_ylt=?p=".urlencode($name)."+".urlencode($state);
 	$allUrls = $Yahoo->crawlSearchPage($province, $id);
 }
 
-// assume first url is correct
-$urls = $allUrls[0];
-$reviewUrl = $Yahoo->getReviewUrl($urls['url']);
+if($allUrls){
+	// assume first url is correct
+	$urls = $allUrls[0];
+	$reviewUrl = $Yahoo->getReviewUrl($urls['url']);
 
-$pattern = substr($phone, -4);
-echo $pattern."<br>";
-if(!$pattern) {
-	$pattern = $st;
-	echo $pattern." 2p<br>";
-}
-$firsturl = $Yahoo->crawlFirstPage($province, $id, $urls, $pattern);
-if($firsturl) {
-	echo 'poi page found';
-	$Yahoo->updateGotPoi($id, $gotPoi=1, $baseurl, $firsturl, $reviewurl);
-} else {
+	$pattern = substr($phone, -4);
+	echo $pattern."<br>";
+	if(!$pattern) {
+		$pattern = $st;
+		echo $pattern." 2p<br>";
+	}
+	$firsturl = $Yahoo->crawlFirstPage($province, $id, $urls, $pattern);
+	if($firsturl) {
+		echo 'poi page found';
+		$Yahoo->updateGotPoi($id, $gotPoi=1, $baseurl, $firsturl, $reviewurl);
+	} else {
+		echo 'poi not found';
+		$Yahoo->updateGotPoi($id, $gotPoi=0, $baseurl, '', '');
+	}
+}else{
 	echo 'poi not found';
 	$Yahoo->updateGotPoi($id, $gotPoi=0, $baseurl, '', '');
 }
+
 echo "<br>";
 ?>
 <?php } while ($row_rsView = mysql_fetch_assoc($rsView)); ?>
