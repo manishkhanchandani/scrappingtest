@@ -11,7 +11,8 @@ if (isset($_GET['province'])) {
   $colname_rsView = (get_magic_quotes_gpc()) ? $_GET['province'] : addslashes($_GET['province']);
 }
 mysql_select_db($database_conn, $conn);
-$query_rsView = sprintf("SELECT * FROM us_xml_yahoo WHERE province = '%s' AND gotpoi = 0", $colname_rsView);
+//$query_rsView = sprintf("SELECT * FROM us_xml_yahoo WHERE province = '%s' AND id = 32646 and baseurlflag=1 and hotel_id!=0;", $colname_rsView);
+$query_rsView = sprintf("SELECT * FROM us_xml_yahoo WHERE province = '%s' AND gotpoi = 0 and baseurlflag=1 and hotel_id!=0;", $colname_rsView);
 $rsView = mysql_query($query_rsView, $conn) or die(mysql_error());
 $row_rsView = mysql_fetch_assoc($rsView);
 $totalRows_rsView = mysql_num_rows($rsView);
@@ -59,9 +60,10 @@ $id = $row_rsView['id'];
 $data = unserialize($row_rsView['data']);
 $search=array('\'','-');
 $replace=array(' ',' ');
-$name = str_replace($search,$reaplce,$data['name']);
+$name = str_replace('\'',' ',$data['name']);
 $city = $data['city'];
 $state = $data['state'];
+$url = $data['url'];
 $phone = trim($data['phone']);
 $st = trim($data['streetAddress1']);
 echo $Yahoo->url = "http://travel.yahoo.com/bin/search/travel;_ylt=?p=".urlencode($name)."+".urlencode($city);
@@ -70,12 +72,19 @@ $baseurl = $Yahoo->url;
 if(!$allUrls = $Yahoo->crawlSearchPage($province, $id)){
 	//do this
 	echo $Yahoo->url = "http://travel.yahoo.com/bin/search/travel;_ylt=?p=".urlencode($name)."+".urlencode($state);
-	$allUrls = $Yahoo->crawlSearchPage($province, $id);
+	echo "<br>";
+	if(!$allUrls = $Yahoo->crawlSearchPage($province, $id)){
+		//do this
+		echo $Yahoo->url = "http://travel.yahoo.com/bin/search/travel;_ylt=?p=".urlencode($name);
+		echo "<br>";
+		$allUrls = $Yahoo->crawlSearchPage($province, $id);
+	}
 }
 
 if($allUrls){
 	// assume first url is correct
 	$urls = $allUrls[0];
+
 	$reviewUrl = $Yahoo->getReviewUrl($urls['url']);
 
 	$pattern = substr($phone, -4);
@@ -84,13 +93,32 @@ if($allUrls){
 		$pattern = $st;
 		echo $pattern." 2p<br>";
 	}
-	$firsturl = $Yahoo->crawlFirstPage($province, $id, $urls, $pattern);
+	$firsturl = $Yahoo->crawlFirstPage($province, $id,$urls['url'], $pattern);//phone match
 	if($firsturl) {
 		echo 'poi page found';
 		$Yahoo->updateGotPoi($id, $gotPoi=1, $baseurl, $firsturl, $reviewurl);
 	} else {
-		echo 'poi not found';
-		$Yahoo->updateGotPoi($id, $gotPoi=0, $baseurl, '', '');
+		$pattern = $st;
+		$firsturl = $Yahoo->crawlFirstPage($province, $id,$urls['url'], $pattern);//address match
+		if($firsturl) {
+			echo 'poi page found';
+			$Yahoo->updateGotPoi($id, $gotPoi=1, $baseurl, $firsturl, $reviewurl);
+		} else {
+			if($url){
+				$pattern = $url;
+				$firsturl = $Yahoo->crawlFirstPage($province, $id, $urls['url'], $pattern);//url match
+				if($firsturl) {
+					echo 'poi page found';
+					$Yahoo->updateGotPoi($id, $gotPoi=1, $baseurl, $firsturl, $reviewurl);
+				} else {
+					echo 'poi not found';
+					$Yahoo->updateGotPoi($id, $gotPoi=0, $baseurl, '', '');
+				}
+			}else{
+				echo 'poi not found';
+					$Yahoo->updateGotPoi($id, $gotPoi=0, $baseurl, '', '');
+			}
+		}
 	}
 }else{
 	echo 'poi not found';
