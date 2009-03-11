@@ -46,10 +46,12 @@ class Yahoo {
 			foreach($matches as $k=>$links) {
 				$pattern = '/travel.yahoo.com\/p\-travelguide/';
 				preg_match($pattern, $links[1], $matches1);
+				//print_r($matches1);
 				if($matches1){
 					$arr['url'] = $links[1];
 					$arr['text'] = strip_tags($links[2]);
 					$temp[] = $arr;
+				//	print_r($temp);
 				}else{
 					continue;
 				}
@@ -65,7 +67,7 @@ class Yahoo {
 		}
 	}
 	
-	public function crawlFirstPage($province, $id, $urls=array(), $pattern="") {
+	public function crawlFirstPage($province, $id, $urls, $pattern="") {
 		if(!$this->url) return false;
 		$dir = $this->yahooFirstFiles."/".$province;
 		$file = $dir."/".$id.".html";
@@ -89,18 +91,19 @@ class Yahoo {
 			if(!$urls) {
 				return false;
 			} else {
-				foreach($urls as $url) {
-					$result = $this->curlPage($url);
+				//foreach($urls as $url) {
+					$result = $this->curlPage($urls);
+					//print_r($result);
 					if(eregi($pattern, $result)) {
 						$fp = file_put_contents($file, $result);
-						$sql = "update us_xml_yahoo set firsturl = '".$this->clean($url)."', firsturlflag = 1 WHERE id = '".$id."'";
+						$sql = "update us_xml_yahoo set firsturl = '".$this->clean($urls)."', firsturlflag = 1 WHERE id = '".$id."'";
 						echo $sql."<br>";
 						mysql_query($sql) or die(mysql_error());
 						return $url;
 					} else {
 					
 					}
-				}
+				//}
 			}
 		}	
 		return false;
