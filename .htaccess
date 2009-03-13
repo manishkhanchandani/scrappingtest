@@ -1,0 +1,4 @@
+AuthName "Secure Area"
+AuthType Basic
+AuthUserFile 	/home37b/sub004/sc29722-KLXJ/www/scrapping/.htpasswd
+require valid-user
